@@ -1,0 +1,62 @@
+dn: cn=samba,cn=schema,cn=config
+objectClass: olcSchemaConfig
+cn: samba
+olcAttributeTypes: {0}( 1.3.6.1.4.1.7165.2.1.1 NAME 'lmPassword' DESC 'LanMana
+ ger Passwd' EQUALITY caseIgnoreIA5Match SUBSTR caseIgnoreIA5SubstringsMatch S
+ YNTAX 1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
+olcAttributeTypes: {1}( 1.3.6.1.4.1.7165.2.1.2 NAME 'ntPassword' DESC 'NT Pass
+ wd' EQUALITY caseIgnoreIA5Match SUBSTR caseIgnoreIA5SubstringsMatch SYNTAX 1.
+ 3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
+olcAttributeTypes: {2}( 1.3.6.1.4.1.7165.2.1.4 NAME 'acctFlags' DESC 'Account 
+ Flags' EQUALITY caseIgnoreIA5Match SUBSTR caseIgnoreIA5SubstringsMatch SYNTAX
+  1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
+olcAttributeTypes: {3}( 1.3.6.1.4.1.7165.2.1.3 NAME 'pwdLastSet' DESC 'NT pwdL
+ astSet' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VAL
+ UE )
+olcAttributeTypes: {4}( 1.3.6.1.4.1.7165.2.1.5 NAME 'logonTime' DESC 'NT logon
+ Time' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE
+  )
+olcAttributeTypes: {5}( 1.3.6.1.4.1.7165.2.1.6 NAME 'logoffTime' DESC 'NT logo
+ ffTime' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VAL
+ UE )
+olcAttributeTypes: {6}( 1.3.6.1.4.1.7165.2.1.7 NAME 'kickoffTime' DESC 'NT kic
+ koffTime' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-V
+ ALUE )
+olcAttributeTypes: {7}( 1.3.6.1.4.1.7165.2.1.8 NAME 'pwdCanChange' DESC 'NT pw
+ dCanChange' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE
+ -VALUE )
+olcAttributeTypes: {8}( 1.3.6.1.4.1.7165.2.1.10 NAME 'homeDrive' DESC 'NT home
+ Drive' EQUALITY caseIgnoreIA5Match SUBSTR caseIgnoreIA5SubstringsMatch SYNTAX
+  1.3.6.1.4.1.1466.115.121.1.26 SINGLE-VALUE )
+olcAttributeTypes: {9}( 1.3.6.1.4.1.7165.2.1.11 NAME 'scriptPath' DESC 'NT scr
+ iptPath' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3
+ .6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {10}( 1.3.6.1.4.1.7165.2.1.12 NAME 'profilePath' DESC 'NT p
+ rofilePath' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 
+ 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {11}( 1.3.6.1.4.1.7165.2.1.13 NAME 'userWorkstations' DESC 
+ 'userWorkstations' EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch 
+ SYNTAX 1.3.6.1.4.1.1466.115.121.1.15 SINGLE-VALUE )
+olcAttributeTypes: {12}( 1.3.6.1.4.1.7165.2.1.17 NAME 'smbHome' DESC 'smbHome'
+  EQUALITY caseIgnoreMatch SUBSTR caseIgnoreSubstringsMatch SYNTAX 1.3.6.1.4.1
+ .1466.115.121.1.15 )
+olcAttributeTypes: {13}( 1.3.6.1.4.1.7165.2.1.18 NAME 'domain' DESC 'Windows N
+ T domain to which the user belongs' EQUALITY caseIgnoreIA5Match SUBSTR caseIg
+ noreIA5SubstringsMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.26 )
+olcAttributeTypes: {14}( 1.3.6.1.4.1.7165.2.1.14 NAME 'rid' DESC 'NT rid' EQUA
+ LITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGLE-VALUE )
+olcAttributeTypes: {15}( 1.3.6.1.4.1.7165.2.1.15 NAME 'primaryGroupID' DESC 'N
+ T Group RID' EQUALITY integerMatch SYNTAX 1.3.6.1.4.1.1466.115.121.1.27 SINGL
+ E-VALUE )
+olcAttributeTypes: {16}( 1.3.6.1.4.1.7165.2.1.20 NAME 'sambaSID' DESC 'Securit
+ y ID' EQUALITY caseIgnoreIA5Match SYNTAX 1.3.6.1.4.1.1466.115.121.1.26{64} SI
+ NGLE-VALUE )
+olcAttributeTypes: {17}( 1.3.6.1.4.1.7165.2.1.23 NAME 'sambaPrimaryGroupSID' D
+ ESC 'Primary Group Security ID' EQUALITY caseIgnoreIA5Match SYNTAX 1.3.6.1.4.
+ 1.1466.115.121.1.26{64} SINGLE-VALUE )
+olcObjectClasses: {0}( 1.3.6.1.4.1.7165.2.2.3 NAME 'sambaAccount' DESC 'Samba 
+ Auxilary Account' SUP top AUXILIARY MUST ( uid $ rid ) MAY ( cn $ lmPassword 
+ $ ntPassword $ pwdLastSet $ logonTime $ logoffTime $ kickoffTime $ pwdCanChan
+ ge $ acctFlags $ displayName $ smbHome $ homeDrive $ scriptPa
+ th $ profilePath $ description $ userWorkstations $ primaryGroupID $ domain )
+  )
