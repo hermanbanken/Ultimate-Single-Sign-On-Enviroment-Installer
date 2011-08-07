@@ -10,7 +10,7 @@ class InvalidDN(Exception):pass
 class SubprocessError(Exception):pass
 
 def execute_and_wait(cmd, showcmd=True):
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    process = Popen([cmd], stdout=PIPE, stderr=STDOUT, shell=True)
     stdout, _ = process.communicate()
 
     if process.returncode:
@@ -161,15 +161,6 @@ if __name__ == "__main__":
     hostname = socket.getfqdn()
     shorthostname = hostname.split(".")[0]
 
-
-    print "Getting updates...",
-    output = execute_and_wait("apt-get update")
-    print "Done"
-
-    print "Installing LDAP...",
-    output = execute_and_wait("apt-get install -y --force-yes slapd ldap-utils")
-    print "Done"
-
     print "Running slapppasswd.",
     slappasswd = execute_and_wait("slappasswd -s %s" % passwd, showcmd=False)
     print "Done"
@@ -202,8 +193,3 @@ if __name__ == "__main__":
     print "Writing Mac OSX config to LDAP tree...",
     output = execute_and_wait("ldapadd -Y EXTERNAL -H ldapi:/// -f '%s'" % os.path.join(sys.path[0], "etc", "macodconfig.xml"))
     print "Done"
-
-#
-# This is where Herman left off...all of this is untested
-#
-
