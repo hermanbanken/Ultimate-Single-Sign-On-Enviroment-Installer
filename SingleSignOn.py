@@ -128,26 +128,19 @@ homeDirectory: /home/%(user)s
 title: System Administrator
 """
 
-mac = """ 
 # mac osx adjustments to group
-dn: cn=admin,ou=groups,%(dn)s
+mac = """dn: cn=admin,ou=groups,%(dn)s
 changetype: modify
 add: objectClass
 objectClass: apple-group
 objectClass: extensibleObject
-
-dn: cn=admin,ou=groups,%(dn)s
-changetype: modify
+-
 add: apple-group-realname
 apple-group-realname: Open Directory Administrators
-
-dn: cn=admin,ou=groups,%(dn)s
-changetype: modify
+-
 add: apple-generateduid
 apple-generateduid: %(admingrp)s
-
-dn: cn=admin,ou=groups,%(dn)s
-changetype: modify
+-
 add: apple-group-memberguid
 apple-group-memberguid: %(rootuuid)s
 
@@ -159,14 +152,10 @@ objectClass: apple-user
 objectClass: extensibleObject
 objectClass: person
 objectClass: top
-
-dn: %(rootdn)s
-changetype: modify
+-
 add: apple-generateduid
 apple-generateduid: %(rootuuid)s
-
-dn: %(rootdn)s
-changetype: modify
+-
 add: authAuthority
 authAuthority: ;basic;
 
@@ -377,8 +366,8 @@ if __name__ == "__main__":
     print "Adding basic structure to LDAP tree...",
     output = execute_and_wait("ldapadd -x -D 'cn=%(user)s,%(dn)s' -w '%(passwd)s' -f '%(dit_path)s'" % locals())
 
-    print "Generating Mac OSX bindings template for Open Directory..."
-    mac_template_path = os.path.abspath(os.path.join(sys.path[0], "etc/macodconfig.xml")
+    print "Generating Mac OSX bindings template for Open Directory...",
+    mac_template_path = os.path.abspath(os.path.join(sys.path[0], "etc/macodconfig.xml"))
     fi = open(mac_template_path, 'r')
     mac_template = fi.read() % locals()
     fi.close()
