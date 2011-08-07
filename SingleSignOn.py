@@ -74,39 +74,39 @@ dit = """dn: %(dn)s
 objectClass: dcObject
 objectclass: organization
 o: %(hostname)s
-dc: %(shorthostname)
+dc: %(shorthostname)s
 description: Tree root
 
-dn: cn=%(user),%(dn)
+dn: cn=%(user)s,%(dn)s
 objectClass: simpleSecurityObject
 objectClass: organizationalRole
-cn: %(user)
-userPassword: %(slappasswd)
+cn: %(user)s
+userPassword: %(slappasswd)s
 description: LDAP administrator
 
 # Populating
-dn: ou=users,%(dn)
+dn: ou=users,%(dn)s
 ou: users
 objectClass: organizationalUnit
 objectClass: top
 
-dn: ou=groups,%(dn)
+dn: ou=groups,%(dn)s
 ou: groups
 objectClass: organizationalUnit
 objectClass: top
 
-dn: ou=mounts,%(dn)
+dn: ou=mounts,%(dn)s
 ou: mounts
 objectClass: organizationalUnit
 objectClass: top
 
 #Adding Admin group
-dn: cn=admin,ou=groups,%(dn)
+dn: cn=admin,ou=groups,%(dn)s
 cn: admin
 gidNumber: 80
 objectClass: top
 objectClass: posixGroup
-memberUid: $usernm
+memberUid: %(user)s
 
 
 #Adding user
@@ -115,7 +115,7 @@ objectClass: inetOrgPerson
 objectClass: posixAccount
 objectClass: shadowAccount
 objectClass: organizationalPerson
-uid: %(user)
+uid: %(user)s
 sn: Administrator
 givenName: Directory
 cn: Directory Administrator
@@ -123,7 +123,7 @@ uidNumber: 1000
 gidNumber: 80
 userPassword: $passwd
 loginShell: /bin/bash
-homeDirectory: /home/$usernm
+homeDirectory: /home/%(user)s
 title: System Administrator
 """
 
