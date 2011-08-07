@@ -197,10 +197,10 @@ if __name__ == "__main__":
     fi.close()
     print "wrote %s. Done" % dit_path
     print "Adding basic structure to LDAP tree...",
-    output = execute_and_wait("ldapadd -Y EXTERNAL -H ldapi:/// -f '%s'" % dit_path)
+    output = execute_and_wait("ldapadd -x -D 'cn=%(user)s,%(dn)s' -w '%(passwd)s' -f '%(dit_path)s'" % locals())
 
     print "Writing Mac OSX config to LDAP tree...",
-    output = execute_and_wait("ldapadd -Y EXTERNAL -H ldapi:/// -f '%s'" % os.path.join(sys.path[0], "etc", "macodconfig.xml"))
+   # output = execute_and_wait("ldapadd -Y -D cn=%(user)s,%(dn)s -f '%s'" % os.path.join(sys.path[0], "etc", "macodconfig.xml"))
     print "Done"
 
 #
