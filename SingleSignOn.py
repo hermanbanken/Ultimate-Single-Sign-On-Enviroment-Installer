@@ -10,7 +10,7 @@ class InvalidDN(Exception):pass
 class SubprocessError(Exception):pass
 
 def execute_and_wait(cmd, showcmd=True):
-    process = Popen(cmd, stdout=PIPE, stderr=STDOUT)
+    process = Popen(cmd, stdout=PIPE, stderr=STDOUT, shell=True)
     stdout, _ = process.communicate()
 
     if process.returncode:
@@ -178,7 +178,7 @@ if __name__ == "__main__":
 
     for schema in ("cosine.ldif", "inetorgperson.ldif", "nis.ldif", "misc.ldif", "samba.ldif", "apple.ldif"):
         print "%s..." % schema,
-        output = execute_and_wait("ldapadd -Y EXTERNAL -H ldapi:/// -f \"%s\"" % os.path.abspath(os.path.join(sys.path[0], "schemas", schema)))
+        output = execute_and_wait("ldapadd -Y EXTERNAL -H ldapi:/// -f \"%s\"" % os.path.abspath(os.path.join(sys.path[0], "schema", schema)))
         print "Done"
 
     print "Writing configuration to temp directory...",
@@ -206,4 +206,3 @@ if __name__ == "__main__":
 #
 # This is where Herman left off...all of this is untested
 #
-
