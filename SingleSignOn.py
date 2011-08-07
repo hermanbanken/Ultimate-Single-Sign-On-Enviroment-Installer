@@ -2,6 +2,7 @@
 
 import sys, os, re, socket
 import getpass, tempfile
+import uuid, base64
 
 from subprocess import Popen, PIPE, STDOUT
 
@@ -127,6 +128,181 @@ homeDirectory: /home/%(user)s
 title: System Administrator
 """
 
+mac = """ 
+# mac osx adjustments to group
+dn: cn=admin,ou=groups,%(dn)s
+changetype: modify
+add: objectClass
+objectClass: apple-group
+objectClass: extensibleObject
+
+dn: cn=admin,ou=groups,%(dn)s
+changetype: modify
+add: apple-group-realname
+apple-group-realname: Open Directory Administrators
+
+dn: cn=admin,ou=groups,%(dn)s
+changetype: modify
+add: apple-generateduid
+apple-generateduid: %(admingrp)s
+
+dn: cn=admin,ou=groups,%(dn)s
+changetype: modify
+add: apple-group-memberguid
+apple-group-memberguid: %(rootuuid)s
+
+# mac osx adjustments to root user
+dn: %(rootdn)s
+changetype: modify
+add: objectClass
+objectClass: apple-user
+objectClass: extensibleObject
+objectClass: person
+objectClass: top
+
+dn: %(rootdn)s
+changetype: modify
+add: apple-generateduid
+apple-generateduid: %(rootuuid)s
+
+dn: %(rootdn)s
+changetype: modify
+add: authAuthority
+authAuthority: ;basic;
+
+# mac osx placeholders
+dn: ou=macosx,%(dn)s
+ou: macosx
+objectClass: organizationalUnit
+description: Holds metadata for OSX server
+
+dn: cn=accesscontrols,ou=macosx,%(dn)s
+cn: accesscontrols
+objectClass: container
+
+dn: cn=certificateauthorities,ou=macosx,%(dn)s
+cn: certificateauthorities
+objectClass: container
+
+dn: cn=computers,ou=macosx,%(dn)s
+cn: computers
+objectClass: container
+
+dn: cn=computer_groups,ou=macosx,%(dn)s
+cn: computer_groups
+objectClass: container
+
+dn: cn=computer_lists,ou=macosx,%(dn)s
+cn: computer_lists
+objectClass: container
+
+dn: cn=config,ou=macosx,%(dn)s
+cn: config
+objectClass: container
+
+dn: cn=locations,ou=macosx,%(dn)s
+cn: locations
+objectClass: container
+
+dn: cn=machines,ou=macosx,%(dn)s
+cn: machines
+objectClass: container
+
+dn: cn=neighborhoods,ou=macosx,%(dn)s
+cn: neighborhoods
+objectClass: container
+
+dn: cn=people,ou=macosx,%(dn)s
+cn: people
+objectClass: container
+
+dn: cn=presets_computer_lists,ou=macosx,%(dn)s
+cn: presets_computer_lists
+objectClass: container
+
+dn: cn=presets_groups,ou=macosx,%(dn)s
+cn: presets_groups
+objectClass: container
+
+dn: cn=preset_users,ou=macosx,%(dn)s
+cn: preset_users
+objectClass: container
+
+dn: cn=printers,ou=macosx,%(dn)s
+cn: printers
+objectClass: container
+
+dn: cn=augments,ou=macosx,%(dn)s
+cn: augments
+objectClass: container
+
+dn: cn=autoserversetup,ou=macosx,%(dn)s
+cn: autoserversetup
+objectClass: container
+
+dn: cn=filemakerservers,ou=macosx,%(dn)s
+cn: filemakerservers
+objectClass: container
+
+dn: cn=resources,ou=macosx,%(dn)s
+cn: resources
+objectClass: container
+
+dn: cn=places,ou=macosx,%(dn)s
+cn: places
+objectClass: container
+
+dn: cn=maps,ou=macosx,%(dn)s
+cn: maps
+objectClass: container
+
+dn: cn=automountMap,ou=macosx,%(dn)s
+cn: automountMap
+objectClass: container
+
+dn: ou=macosxodconfig,cn=config,ou=macosx,%(dn)s
+ou: macosxodconfig
+objectClass: organizationalUnit
+description:: %(encoded_template)s
+
+dn: cn=presets_computers,ou=macosx,%(dn)s
+cn: presets_computers
+objectClass: container
+
+dn: cn=presets_computer_groups,ou=macosx,%(dn)s
+cn: presets_computer_groups
+objectClass: container
+
+dn: cn=CIFSServer,cn=config,ou=macosx,%(dn)s
+cn: CIFSServer
+objectClass: apple-configuration
+objectClass: top
+
+dn: cn=mcx_cache,cn=config,ou=macosx,%(dn)s
+cn: mcx_cache
+objectClass: apple-configuration
+objectClass: top
+
+dn: cn=ldapreplicas,cn=config,ou=macosx,%(dn)s
+cn: ldapreplicas
+objectClass: apple-configuration
+objectClass: top
+
+dn: cn=passwordserver,cn=config,ou=macosx,%(dn)s
+cn: passwordserver
+objectClass: apple-configuration
+objectClass: top
+
+dn: cn=macosxodpolicy,cn=config,ou=macosx,%(dn)s
+cn: macosxodpolicy
+objectClass: apple-configuration
+objectClass: top
+
+dn: cn=CollabServices,cn=config,ou=macosx,%(dn)s
+cn: CollabServices
+objectClass: apple-configuration
+objectClass: top
+"""
 
 
 if __name__ == "__main__":
@@ -161,6 +337,8 @@ if __name__ == "__main__":
     hostname = socket.getfqdn()
     shorthostname = hostname.split(".")[0]
 
+    rootuuid = uuid.uuid1() # UUID for apple root user
+    admingrp = uuid.uuid1() # UUID for apple admin group
 
     print "Getting updates...",
     output = execute_and_wait("apt-get update")
@@ -199,10 +377,18 @@ if __name__ == "__main__":
     print "Adding basic structure to LDAP tree...",
     output = execute_and_wait("ldapadd -x -D 'cn=%(user)s,%(dn)s' -w '%(passwd)s' -f '%(dit_path)s'" % locals())
 
-    print "Writing Mac OSX config to LDAP tree...",
-   # output = execute_and_wait("ldapadd -Y -D cn=%(user)s,%(dn)s -f '%s'" % os.path.join(sys.path[0], "etc", "macodconfig.xml"))
-    print "Done"
-
-#
-# This is where Herman left off...all of this is untested
-#
+    print "Generating Mac OSX bindings template for Open Directory..."
+    mac_template_path = os.path.abspath(os.path.join(sys.path[0], "etc/macodconfig.xml")
+    fi = open(mac_template_path, 'r')
+    mac_template = fi.read() % locals()
+    fi.close()
+    encoded_template = base64.b64encode(mac_template) # We place this var in mac.ldif, base64 format required
+    
+    print "Writing Mac OSX structure to temp directory...",
+    mac_path = os.path.join(tempdir, "mac.ldif")
+    fi = open(mac_path, 'w')
+    fi.write(mac % locals())
+    fi.close()
+    print "write %s. Done" % mac_path
+    print "Adding Mac OSX structure to LDAP tree...",
+    output = execute_and_wait("ldapadd -x -D 'cn=%(user)s,%(dn)s' -w '%(passwd)s' -f '%(mac_path)s'" % locals())
